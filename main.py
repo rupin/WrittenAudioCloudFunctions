@@ -52,7 +52,7 @@ def main(request):
 	audio = MP3(BytesIO(audioStream))
 	output['duration']=audio.info.length
 	t5=time.time()
-	print("Track Duration Took: " +str(t5-t4))
+	print("Track Duration Took Calculation: " +str(t5-t4))
 	jsonreturnvalue=json.dumps(output)
 	return jsonreturnvalue
 
