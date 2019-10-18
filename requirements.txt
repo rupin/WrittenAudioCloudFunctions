@@ -3,4 +3,5 @@ xlrd==1.2.0
 pydub==0.23.1
 pathlib==1.0.1
 argparse==1.4.0
+google-cloud-storage==1.7.0
 

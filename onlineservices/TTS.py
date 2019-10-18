@@ -3,20 +3,7 @@ from google.cloud import texttospeech
 
 
 class TTS():
-	#self.service_provider='GOOGLE'
-	SERVICE_PROVIDER_GOOGLE='GOOG'
-	SERVICE_PROVIDER_AWS='AWS'
-	def __init__(self, service_prov):
-		self.service_provider = service_prov
-
-	def getTTSAudio(self,engtext):
-
-		if(self.service_provider==SERVICE_PROVIDER_GOOGLE):
-			return convertTTSGoogle(self,engtext)
-		elif(self.service_provider==SERVICE_PROVIDER_AWS):
-			pass
-			#return convertTTSGoogle(self,engtext)
-
+	
 	def convertTTSGoogle(self, engtext):
 		#print(engtext)
 
