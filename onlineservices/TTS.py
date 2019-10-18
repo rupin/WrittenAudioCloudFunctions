@@ -4,27 +4,29 @@ from google.cloud import texttospeech
 
 class TTS():
 	
-	def convertTTSGoogle(self, engtext):
-		#print(engtext)
+	def convertTTSGoogle(self, configuration):
 
-		#return
+		sentence = configuration.get('sentence')		
+		language_code=configuration.get('language_code')
+		engine_name=configuration.get('engine_name')
+
 
 		# Instantiates a client
 		client = texttospeech.TextToSpeechClient()
 
 		# Set the text input to be synthesized
-		synthesis_input = texttospeech.types.SynthesisInput(text=engtext)
+		synthesis_input = texttospeech.types.SynthesisInput(text=sentence)
 
 		# Build the voice request, select the language code ("en-US") and the ssml
 		# voice gender ("neutral")
 		voice = texttospeech.types.VoiceSelectionParams(
-		    language_code='en-IN',
+		    language_code=language_code,
 		    ssml_gender=texttospeech.enums.SsmlVoiceGender.FEMALE,
-		    name= "en-IN-Wavenet-A")
+		    name=engine_name)
 
 		# Select the type of audio file you want returned
 		audio_config = texttospeech.types.AudioConfig(
-		    audio_encoding=texttospeech.enums.AudioEncoding.LINEAR16, # this gets a WAV file
+		    audio_encoding=texttospeech.enums.AudioEncoding.MP3, # this gets a MP3 file
 		    effects_profile_id=["large-home-entertainment-class-device"],)
 
 		# Perform the text-to-speech request on the text input with the selected
