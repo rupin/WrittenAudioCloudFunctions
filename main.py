@@ -5,6 +5,9 @@ import json
 from io import BytesIO
 import time
 
+from mutagen.mp3 import MP3
+
+
 
 
 
@@ -44,8 +47,10 @@ def main(request):
 
 	output['file_url']='https://storage.cloud.google.com/'+bucket_name+'/'+filename_with_extension
 	t4=time.time()
-	current_audio=AudioSegment.from_mp3(BytesIO(audioStream))	
-	output['duration']=current_audio.duration_seconds
+	#current_audio=AudioSegment.from_mp3(BytesIO(audioStream))	
+	#output['duration']=current_audio.duration_seconds
+	audio = MP3(BytesIO(audioStream))
+	output['duration']=audio.info.length
 	t5=time.time()
 	print("Track Duration Took: " +str(t5-t4))
 	jsonreturnvalue=json.dumps(output)
