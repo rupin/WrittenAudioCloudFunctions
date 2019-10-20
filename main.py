@@ -1,6 +1,5 @@
 from onlineservices.TTS import TTS
 from google.cloud import storage
-from pydub import AudioSegment
 import json
 from io import BytesIO
 import time
@@ -14,7 +13,7 @@ from mutagen.mp3 import MP3
 def main(request):
 	
 	#sentence="Let us Learn How to Design a PCB using Easy E D A"
-	print(request)
+	#print(request)
 	jsonobject=request.get_json()
 	newTTSObject=TTS()
 	t0=time.time()
