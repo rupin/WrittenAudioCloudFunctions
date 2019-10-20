@@ -3,6 +3,7 @@ from google.cloud import storage
 import json
 from io import BytesIO
 import time
+from flask import jsonify
 
 from mutagen.mp3 import MP3
 
@@ -52,8 +53,8 @@ def main(request):
 	output['duration']=audio.info.length
 	t5=time.time()
 	print("Track Duration Took Calculation: " +str(t5-t4))
-	jsonreturnvalue=json.dumps(output)
-	return jsonreturnvalue
+	#jsonreturnvalue=json.dumps(output)
+	return jsonify(output)
 
 
 # if __name__ == "__main__":
