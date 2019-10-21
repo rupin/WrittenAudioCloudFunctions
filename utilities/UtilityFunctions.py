@@ -11,7 +11,7 @@ from mutagen.mp3 import MP3
 
 
 
-def GenerateSingleAudio(jsonobject):	
+def GenerateSingleAudio(jsonobject, returnJson=True):	
 	
 	newTTSObject=TTS()
 	t0=time.time()
@@ -49,4 +49,7 @@ def GenerateSingleAudio(jsonobject):
 	t5=time.time()
 	print("Track Duration Took Calculation: " +str(t5-t4))
 	#jsonreturnvalue=json.dumps(output)
-	return jsonify(output)
+	if(returnJson):
+		return jsonify(output)
+	else:
+		return output['file_url'], output['duration']

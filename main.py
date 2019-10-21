@@ -5,7 +5,13 @@ def main(request):
 	jsonObject=request.get_json()
 	return GenerateSingleAudio(jsonObject)
 
-	
+
+def combineAudioFiles(request):
+	jsonObject=request.get_json()
+
+
+
+
 # if __name__ == "__main__":
 #     from flask import Flask, request
 #     app = Flask(__name__)
