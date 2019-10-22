@@ -30,11 +30,17 @@ def CombineFiles(jsonobject):
 			fileInfo=GenerateSingleAudio(unconvertedTrackText, False)
 			file_name=fileInfo.get("file_name")
 			duration=fileInfo.get("duration")
-
+		t8=time.time()
 		AC.combiner(file_name, starttime, duration, frameRate)
+		t7=time.time()
+		print("Combiner Took: " +str(t7-t8))
+
 
 	combinedFileName="track_"+trackID
+	t9=time.time()
 	AC.saveFile(combinedFileName)
+	t10=time.time()
+	print("Saving Combined File Took: " +str(t10-t9))
 	return "abcd"
 
 
