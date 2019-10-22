@@ -1,5 +1,5 @@
-from utilities.UtilityFunctions import GenerateSingleAudio
-
+from utilities.UtilityFunctions import GenerateSingleAudio, CombineFiles
+from flask import jsonify
 
 def main(request):
 	jsonObject=request.get_json()
@@ -8,16 +8,20 @@ def main(request):
 
 def combineAudioFiles(request):
 	jsonObject=request.get_json()
+	return CombineFiles(jsonObject)
 
 
 
 
 # if __name__ == "__main__":
-#     from flask import Flask, request
-#     app = Flask(__name__)
+# 	from flask import Flask, request
+# 	app = Flask(__name__)
 
-#     @app.route('/', methods=['POST'])
-#     def index():
-#         return main(request)
+# 	@app.route('/', methods=['POST'])
+# 	def index():
+# 	    return main(request)
 
-#     app.run('127.0.0.1', 8000, debug=True)
+# 	@app.route('/combine', methods=['POST'])
+# 	def combine():
+# 	    return combineAudioFiles(request)
+# 	app.run('127.0.0.1', 8080, debug=True)

@@ -7,6 +7,39 @@ from flask import jsonify
 
 from mutagen.mp3 import MP3
 
+from utilities.AudioCombiner import AudioCombiner
+
+def CombineFiles(jsonobject):
+	trackID=jsonobject.get("id")
+	bucket_name=jsonobject.get('bucket_name')
+	trackTextArray=jsonobject.get("tracktexts")
+	AC=AudioCombiner()
+	for trackText in trackTextArray:
+
+		trackProcessed=trackText.get("processed")
+		starttime=trackText.get('time_marker')
+		frameRate=trackText.get('frameRate', 24000)
+
+		if(trackProcessed):
+			file_path=trackText.get('audio_file')
+			duration=trackText.get('duration')			
+			
+		else:
+			unconvertedTrackText=trackText.get("convertObject")
+			fileInfo=GenerateSingleAudio(unconvertedTrackText, False)
+			file_name=fileInfo.get("file_name")
+			duration=fileInfo.get("duration")
+
+		AC.combiner(file_name, starttime, duration, frameRate)
+
+	combinedFileName="track_"+trackID
+	AC.saveFile(combinedFileName)
+	return "abcd"
+
+
+		
+
+
 
 
 
@@ -27,7 +60,7 @@ def GenerateSingleAudio(jsonobject, returnJson=True):
 	# Instantiates a client
 	t2=time.time()
 	storage_client = storage.Client()
-	bucket_name="written-audio-files"
+	bucket_name=jsonobject.get('bucket_name')
 	bucket = storage_client.get_bucket(bucket_name) 
 	blob = bucket.blob(filename_with_extension)
 	blob.upload_from_string(audioStream)
@@ -41,6 +74,7 @@ def GenerateSingleAudio(jsonobject, returnJson=True):
 	output={}	
 
 	output['file_url']='https://storage.cloud.google.com/'+bucket_name+'/'+filename_with_extension
+	output['file_name']=filename_with_extension
 	t4=time.time()
 	#current_audio=AudioSegment.from_mp3(BytesIO(audioStream))	
 	#output['duration']=current_audio.duration_seconds
@@ -52,4 +86,4 @@ def GenerateSingleAudio(jsonobject, returnJson=True):
 	if(returnJson):
 		return jsonify(output)
 	else:
-		return output['file_url'], output['duration']
+		return output
