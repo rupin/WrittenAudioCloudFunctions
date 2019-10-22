@@ -13,15 +13,15 @@ def combineAudioFiles(request):
 
 
 
-# if __name__ == "__main__":
-# 	from flask import Flask, request
-# 	app = Flask(__name__)
+if __name__ == "__main__":
+	from flask import Flask, request
+	app = Flask(__name__)
 
-# 	@app.route('/', methods=['POST'])
-# 	def index():
-# 	    return main(request)
+	@app.route('/', methods=['POST'])
+	def index():
+	    return main(request)
 
-# 	@app.route('/combine', methods=['POST'])
-# 	def combine():
-# 	    return combineAudioFiles(request)
-# 	app.run('127.0.0.1', 8080, debug=True)
+	@app.route('/combine', methods=['POST'])
+	def combine():
+	    return combineAudioFiles(request)
+	app.run('127.0.0.1', 8080, debug=True)

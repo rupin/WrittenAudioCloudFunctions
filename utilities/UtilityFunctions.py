@@ -13,7 +13,7 @@ def CombineFiles(jsonobject):
 	trackID=jsonobject.get("id")
 	bucket_name=jsonobject.get('bucket_name')
 	trackTextArray=jsonobject.get("tracktexts")
-	AC=AudioCombiner()
+	AC=AudioCombiner(bucket_name)
 	for trackText in trackTextArray:
 
 		trackProcessed=trackText.get("processed")
