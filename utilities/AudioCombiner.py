@@ -3,6 +3,9 @@ from google.cloud import storage
 import requests
 import io 
 import os
+import tempfile
+
+
 class AudioCombiner():
 	
 	def __init__(self, bucket_name):
@@ -18,10 +21,12 @@ class AudioCombiner():
 		
 		#fileStream=requests.get(file_path)
 		#print(fileStream.__dict__)
-		f = io.BytesIO()		
+		tmpdir=tempfile.gettempdir() # prints the current temporary directory
+		tempFilePath=tmpdir+"/"+file_path
+		print(tempFilePath)	
 		blob = self.bucket.blob(file_path)
-		blob.download_to_filename(file_path)		
-		currentAudio=AudioSegment.from_file(file_path, format="mp3")
+		blob.download_to_filename(tempFilePath)		
+		currentAudio=AudioSegment.from_file(tempFilePath, format="mp3")
 		emptyduration=starttime-(self.lastTiming+self.lastDuration)
 		emptyduration=round(emptyduration,3) * 1000
 		blankTrack=AudioSegment.silent(duration=emptyduration,frame_rate=frameRate)
@@ -34,7 +39,7 @@ class AudioCombiner():
 
 		self.lastTiming=starttime
 		self.lastDuration=duration # dummy, but this has to be initialised by the duration of the current stream
-		os.remove(file_path)
+		os.remove(tempFilePath)
 
 	def saveFile(self, filename):
 		filename_with_extension=filename+".mp3"
