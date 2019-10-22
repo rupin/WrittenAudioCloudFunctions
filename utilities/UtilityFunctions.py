@@ -21,7 +21,8 @@ def CombineFiles(jsonobject):
 		frameRate=trackText.get('frameRate', 24000)
 
 		if(trackProcessed):
-			file_path=trackText.get('audio_file')
+			file_name=trackText.get('file_name')
+			file_url=trackText.get('audio_file')
 			duration=trackText.get('duration')			
 			
 		else:
