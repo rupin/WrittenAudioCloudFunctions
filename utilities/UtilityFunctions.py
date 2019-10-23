@@ -8,52 +8,55 @@ from flask import jsonify
 from mutagen.mp3 import MP3
 
 from utilities.AudioCombiner import AudioCombiner
-from utilities.FFMPEGCombiner import FFMPEGCombiner
+#from utilities.FFMPEGCombiner import FFMPEGCombiner
 
 
-def CombineFilesWithFFMPEG(jsonobject):
-	trackID=jsonobject.get("id")
-	bucket_name=jsonobject.get('bucket_name')
-	trackTextArray=jsonobject.get("tracktexts")
-	AC=FFMPEGCombiner(bucket_name)
-	for trackText in trackTextArray:
+# def CombineFilesWithFFMPEG(jsonobject):
+# 	trackID=jsonobject.get("id")
+# 	bucket_name=jsonobject.get('bucket_name')
+# 	trackTextArray=jsonobject.get("tracktexts")
+# 	AC=FFMPEGCombiner(bucket_name)
+# 	for trackText in trackTextArray:
 
-		trackProcessed=trackText.get("processed")
-		starttime=trackText.get('time_marker')
-		frameRate=trackText.get('frameRate', 24000)
+# 		trackProcessed=trackText.get("processed")
+# 		starttime=trackText.get('time_marker')
+# 		frameRate=trackText.get('frameRate', 24000)
 
-		if(trackProcessed):
-			file_name=trackText.get('file_name')
-			file_url=trackText.get('audio_file')
-			duration=trackText.get('duration')			
+# 		if(trackProcessed):
+# 			file_name=trackText.get('file_name')
+# 			file_url=trackText.get('audio_file')
+# 			duration=trackText.get('duration')			
 			
-		else:
-			unconvertedTrackText=trackText.get("convertObject")
-			fileInfo=GenerateSingleAudio(unconvertedTrackText, False)
-			file_name=fileInfo.get("file_name")
-			duration=fileInfo.get("duration")
-		t8=time.time()
-		AC.CacheFile(file_name, starttime, duration, frameRate)
-		t7=time.time()
-		print("Cacher Took: " +str(t7-t8))
+# 		else:
+# 			unconvertedTrackText=trackText.get("convertObject")
+# 			fileInfo=GenerateSingleAudio(unconvertedTrackText, False)
+# 			file_name=fileInfo.get("file_name")
+# 			duration=fileInfo.get("duration")
+# 		t8=time.time()
+# 		AC.CacheFile(file_name, starttime, duration, frameRate)
+# 		t7=time.time()
+# 		print("Cacher Took: " +str(t7-t8))
 
 
-	combinedFileName="track_"+trackID
-	AC.generateCombinedFile(combinedFileName)
-	AC.SaveOutputFileToBucket(combinedFileName)
-	return 'abcd'
+# 	combinedFileName="track_"+trackID
+# 	AC.generateCombinedFile(combinedFileName)
+# 	AC.SaveOutputFileToBucket(combinedFileName)
+# 	return 'abcd'
 
 
 	
 
 
 def CombineFiles(jsonobject):
+	responseDict={}
 	trackID=jsonobject.get("id")
+	responseDict['id']=trackID
 	bucket_name=jsonobject.get('bucket_name')
 	trackTextArray=jsonobject.get("tracktexts")
 	AC=AudioCombiner(bucket_name)
+	processed_tracks=[]
 	for trackText in trackTextArray:
-
+		
 		trackProcessed=trackText.get("processed")
 		starttime=trackText.get('time_marker')
 		frameRate=trackText.get('frameRate', 24000)
@@ -64,22 +67,42 @@ def CombineFiles(jsonobject):
 			duration=trackText.get('duration')			
 			
 		else:
+			processed_track_dict={}
 			unconvertedTrackText=trackText.get("convertObject")
 			fileInfo=GenerateSingleAudio(unconvertedTrackText, False)
+			
 			file_name=fileInfo.get("file_name")
 			duration=fileInfo.get("duration")
+
+
+			processed_track_dict["id"]=unconvertedTrackText.get("object_id")
+			processed_track_dict["file_name"]=file_name
+			processed_track_dict["duration"]=duration
+			processed_track_dict["file_url"]=fileInfo.get("file_url")
+			processed_tracks.append(processed_track_dict)
+			
+
 		t8=time.time()
 		AC.combiner(file_name, starttime, duration, frameRate)
 		t7=time.time()
 		print("Combiner Took: " +str(t7-t8))
 
+		
+
+	responseDict['processed_tracks']=processed_tracks
+
+
 
 	combinedFileName="track_"+trackID
+
+	
 	t9=time.time()
-	AC.saveFile(combinedFileName)
+	combined_file_name_with_extension=AC.saveFile(combinedFileName)
 	t10=time.time()
 	print("Saving Combined File Took: " +str(t10-t9))
-	return "abcd"
+	responseDict['track_file_name']=combined_file_name_with_extension
+	#responseDict['track_file_name']=saved_combined_file
+	return jsonify(responseDict)
 
 
 		

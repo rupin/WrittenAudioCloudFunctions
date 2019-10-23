@@ -16,7 +16,9 @@ class AudioCombiner():
 		self.silentDurationStarttime=0
 		self.storage_client=storage.Client()
 		self.bucket_name=bucket_name
-		self.bucket = self.storage_client.get_bucket(self.bucket_name) 
+		self.bucket = self.storage_client.get_bucket(self.bucket_name)
+
+
 
 	def combiner(self,file_path, starttime, duration, frameRate):
 		
@@ -63,5 +65,7 @@ class AudioCombiner():
 		filename_with_extension=filename+".mp3"
 		f = io.BytesIO()
 		self.audiocontainer.export(f, format="mp3")		 
-		blob = self.bucket.blob(filename_with_extension)		
+		blob = self.bucket.blob(filename_with_extension)
+		#print(blob.__dict__)		
 		blob.upload_from_file(f)
+		return filename_with_extension
