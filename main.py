@@ -1,5 +1,7 @@
 from utilities.UtilityFunctions import GenerateSingleAudio, CombineFiles
 from flask import jsonify
+import subprocess 
+import os 
 
 def main(request):
 	jsonObject=request.get_json()
@@ -13,25 +15,24 @@ def combineAudioFiles(request):
 	output = data.communicate()
 	return CombineFiles(jsonObject)
 
-def ffmpegcombiner(request):
-	import subprocess 
-	import os 
+def ffmpegcombiner(request):	
 	data = subprocess.Popen(['ffmpeg'])
 	output = data.communicate()
-	return output
+	print(output)
+	return "abcd"
 
 
 
 
-if __name__ == "__main__":
-	from flask import Flask, request
-	app = Flask(__name__)
+# if __name__ == "__main__":
+# 	from flask import Flask, request
+# 	app = Flask(__name__)
 
-	@app.route('/', methods=['POST'])
-	def index():
-	    return main(request)
+# 	@app.route('/', methods=['POST'])
+# 	def index():
+# 	    return main(request)
 
-	@app.route('/combine', methods=['POST'])
-	def combine():
-	    return ffmpegcombiner(request)
-	app.run('127.0.0.1', 8080, debug=True)
+# 	@app.route('/combine', methods=['POST'])
+# 	def combine():
+# 	    return ffmpegcombiner(request)
+# 	app.run('127.0.0.1', 8080, debug=True)
