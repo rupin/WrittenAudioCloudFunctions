@@ -4,6 +4,7 @@ import requests
 import io 
 import os
 import tempfile
+import time
 
 
 class AudioCombiner():
@@ -23,20 +24,37 @@ class AudioCombiner():
 		#print(fileStream.__dict__)
 		tmpdir=tempfile.gettempdir() # prints the current temporary directory
 		tempFilePath=tmpdir+"/"+file_path
-		print(tempFilePath)	
+		#print(tempFilePath)	
 		blob = self.bucket.blob(file_path)
-		blob.download_to_filename(tempFilePath)		
+		ta=time.time()
+
+		blob.download_to_filename(tempFilePath)
+
+		tb=time.time()
+		print("Downloading File Took: " +str(tb-ta))
+
+
+		ta=time.time()
 		currentAudio=AudioSegment.from_file(tempFilePath, format="mp3")
+		tb=time.time()
+		print("Load AudioSegment: " +str(tb-ta))
 		emptyduration=starttime-(self.lastTiming+self.lastDuration)
 		emptyduration=round(emptyduration,3) * 1000
+		ta=time.time()
 		blankTrack=AudioSegment.silent(duration=emptyduration,frame_rate=frameRate)
+		tb=time.time()
+		print("Creating a Blank file Took: " +str(tb-ta))
 		silentDurationEndTime=self.silentDurationStarttime+emptyduration
+
+		ta=time.time()
 
 		if(self.audiocontainer is None):
 			self.audiocontainer=blankTrack+currentAudio
 		else:
 			self.audiocontainer=self.audiocontainer+blankTrack+currentAudio
+		tb=time.time()
 
+		print("Appending Took: " +str(tb-ta))
 		self.lastTiming=starttime
 		self.lastDuration=duration # dummy, but this has to be initialised by the duration of the current stream
 		os.remove(tempFilePath)
