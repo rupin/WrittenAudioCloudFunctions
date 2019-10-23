@@ -27,5 +27,5 @@ def FFMPEGCombiner(request):
 
 # 	@app.route('/combine', methods=['POST'])
 # 	def combine():
-# 	    return FFMPEGCombiner(request)
+# 	    return combineAudioFiles(request)
 # 	app.run('127.0.0.1', 8080, debug=True)

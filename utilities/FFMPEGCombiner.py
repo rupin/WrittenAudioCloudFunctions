@@ -38,20 +38,20 @@ class FFMPEGCombiner():
 		tb=time.time()
 		print("Downloading File Took: " +str(tb-ta))
 
-		self.file_list.append(tempFilePath)
+		
 		
 		emptyduration=starttime-(self.lastTiming+self.lastDuration)
 		emptyduration=round(emptyduration,3) * 1000
+		if(emptyduration>0):
 	
-		blankTrack=AudioSegment.silent(duration=emptyduration,frame_rate=frameRate)		
+			blankTrack=AudioSegment.silent(duration=emptyduration,frame_rate=frameRate)		
+			blank_file_with_extension="blank_"+str(self.blank_file_index)+".mp3"
+			blankFilePath=tmpdir+"/"+blank_file_with_extension
+			blankTrack.export(blankFilePath, format="mp3")	
+			self.file_list.append(blankFilePath)
+			self.blank_file_index=self.blank_file_index+1
 		
-		blank_file_with_extension="blank_"+str(self.blank_file_index)+".mp3"
-		blankFilePath=tmpdir+"/"+blank_file_with_extension
-
-
-		blankTrack.export(blankFilePath, format="mp3")	
-
-		self.file_list.append(blankFilePath)
+		self.file_list.append(tempFilePath)		
 		silentDurationEndTime=self.silentDurationStarttime+emptyduration		
 		self.lastTiming=starttime
 		self.lastDuration=duration # dummy, but this has to be initialised by the duration of the current stream

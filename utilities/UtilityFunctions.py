@@ -7,7 +7,9 @@ from flask import jsonify
 
 from mutagen.mp3 import MP3
 
+from utilities.AudioCombiner import AudioCombiner
 from utilities.FFMPEGCombiner import FFMPEGCombiner
+
 
 def CombineFilesWithFFMPEG(jsonobject):
 	trackID=jsonobject.get("id")
