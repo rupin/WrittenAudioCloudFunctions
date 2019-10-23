@@ -7,7 +7,43 @@ from flask import jsonify
 
 from mutagen.mp3 import MP3
 
-from utilities.AudioCombiner import AudioCombiner
+from utilities.FFMPEGCombiner import FFMPEGCombiner
+
+def CombineFilesWithFFMPEG(jsonobject):
+	trackID=jsonobject.get("id")
+	bucket_name=jsonobject.get('bucket_name')
+	trackTextArray=jsonobject.get("tracktexts")
+	AC=FFMPEGCombiner(bucket_name)
+	for trackText in trackTextArray:
+
+		trackProcessed=trackText.get("processed")
+		starttime=trackText.get('time_marker')
+		frameRate=trackText.get('frameRate', 24000)
+
+		if(trackProcessed):
+			file_name=trackText.get('file_name')
+			file_url=trackText.get('audio_file')
+			duration=trackText.get('duration')			
+			
+		else:
+			unconvertedTrackText=trackText.get("convertObject")
+			fileInfo=GenerateSingleAudio(unconvertedTrackText, False)
+			file_name=fileInfo.get("file_name")
+			duration=fileInfo.get("duration")
+		t8=time.time()
+		AC.CacheFile(file_name, starttime, duration, frameRate)
+		t7=time.time()
+		print("Cacher Took: " +str(t7-t8))
+
+
+	combinedFileName="track_"+trackID
+	AC.generateCombinedFile(combinedFileName)
+	AC.SaveOutputFileToBucket(combinedFileName)
+	return 'abcd'
+
+
+	
+
 
 def CombineFiles(jsonobject):
 	trackID=jsonobject.get("id")

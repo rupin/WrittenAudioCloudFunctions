@@ -1,38 +1,31 @@
-from utilities.UtilityFunctions import GenerateSingleAudio, CombineFiles
+from utilities.UtilityFunctions import GenerateSingleAudio, CombineFiles, CombineFilesWithFFMPEG
 from flask import jsonify
-import subprocess 
-import os 
 
 def main(request):
 	jsonObject=request.get_json()
 	return GenerateSingleAudio(jsonObject)
 
 
-# def combineAudioFiles(request):
-# 	jsonObject=request.get_json()
-# 	data = subprocess.Popen(['ls'], stdout = subprocess.PIPE)
+def combineAudioFiles(request):
+	jsonObject=request.get_json()
+	return CombineFiles(jsonObject)
 
-# 	output = data.communicate()
-# 	return CombineFiles(jsonObject)
-
-def combineAudioFiles(request):	
-	data = subprocess.Popen(['ffmpeg'])
-	output = data.communicate()
-	print(output)
-	return "abcd"
+def FFMPEGCombiner(request):
+	jsonObject=request.get_json()
+	return CombineFilesWithFFMPEG(jsonObject)
 
 
 
 
-# if __name__ == "__main__":
-# 	from flask import Flask, request
-# 	app = Flask(__name__)
+if __name__ == "__main__":
+	from flask import Flask, request
+	app = Flask(__name__)
 
-# 	@app.route('/', methods=['POST'])
-# 	def index():
-# 	    return main(request)
+	@app.route('/', methods=['POST'])
+	def index():
+	    return main(request)
 
-# 	@app.route('/combine', methods=['POST'])
-# 	def combine():
-# 	    return ffmpegcombiner(request)
-# 	app.run('127.0.0.1', 8080, debug=True)
+	@app.route('/combine', methods=['POST'])
+	def combine():
+	    return FFMPEGCombiner(request)
+	app.run('127.0.0.1', 8080, debug=True)
