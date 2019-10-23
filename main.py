@@ -8,14 +8,14 @@ def main(request):
 	return GenerateSingleAudio(jsonObject)
 
 
-def combineAudioFiles(request):
-	jsonObject=request.get_json()
-	data = subprocess.Popen(['ls', '-l', filename], stdout = subprocess.PIPE)
+# def combineAudioFiles(request):
+# 	jsonObject=request.get_json()
+# 	data = subprocess.Popen(['ls'], stdout = subprocess.PIPE)
 
-	output = data.communicate()
-	return CombineFiles(jsonObject)
+# 	output = data.communicate()
+# 	return CombineFiles(jsonObject)
 
-def ffmpegcombiner(request):	
+def combineAudioFiles(request):	
 	data = subprocess.Popen(['ffmpeg'])
 	output = data.communicate()
 	print(output)
