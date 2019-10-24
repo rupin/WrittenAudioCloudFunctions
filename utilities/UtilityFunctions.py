@@ -93,7 +93,7 @@ def CombineFiles(jsonobject):
 
 
 
-	combinedFileName="track_"+trackID
+	combinedFileName=jsonobject.get("track_file_name")
 
 	
 	t9=time.time()
