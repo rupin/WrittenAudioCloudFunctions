@@ -1,11 +1,12 @@
 from pydub import AudioSegment
 from google.cloud import storage
 import requests
-import io 
+from io import BytesIO
 import os
+import io
 import tempfile
 import time
-
+from mutagen.mp3 import MP3
 
 class AudioCombiner():
 	
@@ -64,8 +65,10 @@ class AudioCombiner():
 	def saveFile(self, filename):
 		filename_with_extension=filename+".mp3"
 		f = io.BytesIO()
-		self.audiocontainer.export(f, format="mp3")		 
+		self.audiocontainer.export(f, format="mp3")
+		track_audio = MP3(f)
+		duration=track_audio.info.length	 
 		blob = self.bucket.blob(filename_with_extension)
 		#print(blob.__dict__)		
 		blob.upload_from_file(f)
-		return filename_with_extension
+		return filename_with_extension, duration
