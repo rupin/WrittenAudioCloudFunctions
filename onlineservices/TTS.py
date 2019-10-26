@@ -6,22 +6,29 @@ class TTS():
 	
 	def convertTTSGoogle(self, configuration):
 
-		sentence = configuration.get('sentence')		
+		sentence = configuration.get('sentence')
+		#print(sentence)		
 		language_code=configuration.get('language_code')
 		engine_name=configuration.get('engine_name')
-
+		ssml=configuration.get('is_ssml', False)
+		#print(engine_name)
 
 		# Instantiates a client
 		client = texttospeech.TextToSpeechClient()
 
-		# Set the text input to be synthesized
-		synthesis_input = texttospeech.types.SynthesisInput(text=sentence)
+		if(not ssml):
+
+			# Set the text input to be synthesized
+			#print("Not SSML")
+			synthesis_input = texttospeech.types.SynthesisInput(text=sentence)
+		else:
+			#print("Is SSML")
+			synthesis_input = texttospeech.types.SynthesisInput(ssml=sentence)
 
 		# Build the voice request, select the language code ("en-US") and the ssml
 		# voice gender ("neutral")
 		voice = texttospeech.types.VoiceSelectionParams(
 		    language_code=language_code,
-		    ssml_gender=texttospeech.enums.SsmlVoiceGender.FEMALE,
 		    name=engine_name)
 
 		# Select the type of audio file you want returned

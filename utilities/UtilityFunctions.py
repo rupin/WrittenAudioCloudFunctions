@@ -8,6 +8,8 @@ from flask import jsonify
 from mutagen.mp3 import MP3
 
 from utilities.AudioCombiner import AudioCombiner
+from utilities.AudioCombinerWithSSML import AudioCombinerWithSSML
+
 #from utilities.FFMPEGCombiner import FFMPEGCombiner
 
 
@@ -42,6 +44,48 @@ from utilities.AudioCombiner import AudioCombiner
 # 	AC.generateCombinedFile(combinedFileName)
 # 	AC.SaveOutputFileToBucket(combinedFileName)
 # 	return 'abcd'
+
+def CombineUsingSSML(jsonobject):
+
+	responseDict={}
+	trackID=jsonobject.get("id")
+	responseDict['id']=trackID
+	bucket_name=jsonobject.get('bucket_name')
+	trackTextArray=jsonobject.get("tracktexts")
+	combinedFileName=jsonobject.get("track_file_name")
+	AC=AudioCombinerWithSSML(bucket_name)
+	AC.startSSMLString()
+	#processed_tracks=[]
+	for trackText in trackTextArray:	
+		objectToBeConverted=trackText.get("convertObject")
+		starttime=trackText.get('time_marker')
+		sentence=objectToBeConverted.get("sentence")
+			
+		AC.SSMLStringCombiner(sentence,starttime)
+		#fileInfo=GenerateSingleAudio(unconvertedTrackText, False)
+	
+	AC.endSSMLString()
+
+	
+	dataDict={}
+	dataDict["filename"]=combinedFileName
+	dataDict["bucket_name"]=bucket_name
+	dataDict["object_id"]=trackID
+	dataDict["engine_name"]=jsonobject.get('engine_name')
+	dataDict["language_code"]=jsonobject.get("language_code")
+	dataDict['sentence']=AC.getSSMLString()
+	dataDict['is_ssml']=True
+	convertedFileInfo=GenerateSingleAudio(dataDict, True)
+	
+	return convertedFileInfo	
+			
+
+		
+
+		
+
+
+
 
 
 	
