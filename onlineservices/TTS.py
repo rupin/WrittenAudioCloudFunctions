@@ -13,17 +13,17 @@ class TTS():
 		ssml=configuration.get('is_ssml', False)
 		audio_speed=configuration.get('audio_speed', 1)
 		#print(engine_name)
-
+		#print(ssml)
 		# Instantiates a client
 		client = texttospeech.TextToSpeechClient()
 
 		if(not ssml):
 
 			# Set the text input to be synthesized
-			#print("Not SSML")
+			print("Not SSML")
 			synthesis_input = texttospeech.types.SynthesisInput(text=sentence)
 		else:
-			#print("Is SSML")
+			print("Is SSML")
 			synthesis_input = texttospeech.types.SynthesisInput(ssml=sentence)
 
 		# Build the voice request, select the language code ("en-US") and the ssml
