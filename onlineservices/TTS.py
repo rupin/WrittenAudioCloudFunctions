@@ -12,6 +12,7 @@ class TTS():
 		engine_name=configuration.get('engine_name')
 		ssml=configuration.get('is_ssml', False)
 		audio_speed=configuration.get('audio_speed', 1)
+		audio_pitch=configuration.get('audio_pitch', 1)
 		#print(engine_name)
 		#print(ssml)
 		# Instantiates a client
@@ -36,7 +37,8 @@ class TTS():
 		audio_config = texttospeech.types.AudioConfig(
 		    audio_encoding=texttospeech.enums.AudioEncoding.MP3, # this gets a MP3 file
 		    effects_profile_id=["large-home-entertainment-class-device"],
-		    speaking_rate=audio_speed
+		    speaking_rate=audio_speed,
+		    pitch=audio_pitch
 		    )
 
 		# Perform the text-to-speech request on the text input with the selected
