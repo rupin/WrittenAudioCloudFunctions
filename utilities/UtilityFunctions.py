@@ -105,6 +105,7 @@ def CombineFiles(jsonobject):
 		trackProcessed=trackText.get("processed")
 		starttime=trackText.get('time_marker')
 		frameRate=trackText.get('frameRate', 24000)
+		file_type=trackText.get('file_type', 'mp3')
 
 		if(trackProcessed):
 			file_name=trackText.get('file_name')
@@ -128,7 +129,7 @@ def CombineFiles(jsonobject):
 			
 
 		t8=time.time()
-		AC.combiner(file_name, starttime, duration, frameRate)
+		AC.combiner(file_name, starttime, duration, frameRate,file_type)
 		t7=time.time()
 		print("Combiner Took: " +str(t7-t8))
 
