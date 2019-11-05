@@ -13,6 +13,7 @@ class TTS():
 		ssml=configuration.get('is_ssml', False)
 		audio_speed=configuration.get('audio_speed', 1)
 		audio_pitch=configuration.get('audio_pitch', 1)
+		file_type=configuration.get('file_type', 'mp3')
 		#print(engine_name)
 		#print(ssml)
 		# Instantiates a client
@@ -34,8 +35,12 @@ class TTS():
 		    name=engine_name)
 
 		# Select the type of audio file you want returned
+		encoding=texttospeech.enums.AudioEncoding.LINEAR16 # this gets a WAV file
+		if(file_type=='mp3'):
+			encoding=texttospeech.enums.AudioEncoding.MP3 # this gets a MP3 file
+
 		audio_config = texttospeech.types.AudioConfig(
-		    audio_encoding=texttospeech.enums.AudioEncoding.MP3, # this gets a MP3 file
+		    audio_encoding=encoding, 
 		    effects_profile_id=["large-home-entertainment-class-device"],
 		    speaking_rate=audio_speed,
 		    pitch=audio_pitch

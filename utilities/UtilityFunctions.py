@@ -9,6 +9,7 @@ from mutagen.mp3 import MP3
 
 from utilities.AudioCombiner import AudioCombiner
 from utilities.AudioCombinerWithSSML import AudioCombinerWithSSML
+from pydub import AudioSegment
 
 #from utilities.FFMPEGCombiner import FFMPEGCombiner
 
@@ -167,7 +168,11 @@ def GenerateSingleAudio(jsonobject, returnJson=True):
 	newTTSObject=None
 
 	filename=jsonobject.get('filename')
-	filename_with_extension=filename+".mp3"
+	file_type=jsonobject.get('file_type', 'mp3')
+	extension='.wav'
+	if(file_type=='mp3'):
+		extension='.mp3'
+	filename_with_extension=filename+extension
 
 
 	# Instantiates a client
@@ -188,11 +193,14 @@ def GenerateSingleAudio(jsonobject, returnJson=True):
 
 	output['file_url']='https://storage.cloud.google.com/'+bucket_name+'/'+filename_with_extension
 	output['file_name']=filename_with_extension
+	output['duration']=0
 	t4=time.time()
-	#current_audio=AudioSegment.from_mp3(BytesIO(audioStream))	
-	#output['duration']=current_audio.duration_seconds
-	audio = MP3(BytesIO(audioStream))
-	output['duration']=audio.info.length
+	if(file_type=='wav'):
+		current_audio=AudioSegment.from_wav(BytesIO(audioStream))	
+		output['duration']=current_audio.duration_seconds
+	if(file_type=='mp3'):
+		audio = MP3(BytesIO(audioStream))
+		output['duration']=audio.info.length
 	t5=time.time()
 	print("Track Duration Took Calculation: " +str(t5-t4))
 	#jsonreturnvalue=json.dumps(output)

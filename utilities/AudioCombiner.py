@@ -21,7 +21,7 @@ class AudioCombiner():
 
 
 
-	def combiner(self,file_path, starttime, duration, frameRate):
+	def combiner(self,file_path, starttime, duration, frameRate, file_format='mp3'):
 		
 		#fileStream=requests.get(file_path)
 		#print(fileStream.__dict__)
@@ -38,7 +38,7 @@ class AudioCombiner():
 
 
 		ta=time.time()
-		currentAudio=AudioSegment.from_file(tempFilePath, format="mp3")
+		currentAudio=AudioSegment.from_file(tempFilePath, format=file_format)
 		tb=time.time()
 		print("Load AudioSegment: " +str(tb-ta))
 		emptyduration=starttime-(self.lastTiming+self.lastDuration)
@@ -63,7 +63,10 @@ class AudioCombiner():
 		os.remove(tempFilePath)
 
 	def saveFile(self, filename):
-		filename_with_extension=filename+".mp3"
+		
+		extension='.mp3'
+
+		filename_with_extension=filename+extension
 		f = io.BytesIO()
 		self.audiocontainer.export(f, format="mp3")
 		track_audio = MP3(f)
