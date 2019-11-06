@@ -1,12 +1,15 @@
 from pydub import AudioSegment
 from google.cloud import storage
 import requests
-from io import BytesIO
+from io import BytesIO,StringIO
 import os
 import io
 import tempfile
 import time
 from mutagen.mp3 import MP3
+
+
+import json
 
 class AudioCombiner():
 	
@@ -75,3 +78,34 @@ class AudioCombiner():
 		#print(blob.__dict__)		
 		blob.upload_from_file(f)
 		return filename_with_extension, duration
+
+	def saveJSONResponse(self, filename, responseDict):
+		
+		extension='.json'
+
+		filename_with_extension=filename+extension
+		f = io.BytesIO()
+		jsonData = json.dumps(responseDict)
+		binaryData = jsonData.encode()
+		f.write(binaryData)
+		f.seek(0) # This was important to get the reading position to the first byte	
+			 
+		blob = self.bucket.blob(filename_with_extension)	
+		
+		blob.upload_from_file(f)
+
+		return filename_with_extension
+
+
+
+	def deleteJSON(self,filename):
+		extension='.json'
+		filename_with_extension=filename+extension
+			 
+		blob = self.bucket.blob(filename_with_extension)	
+		if(blob.exists()):
+			blob.delete()
+			print("Stale JSON Response Deleted")
+
+		
+

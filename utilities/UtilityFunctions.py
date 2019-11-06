@@ -1,7 +1,7 @@
 from onlineservices.TTS import TTS
 from google.cloud import storage
 import json
-from io import BytesIO
+from io import BytesIO, StringIO
 import time
 from flask import jsonify
 
@@ -99,6 +99,18 @@ def CombineFiles(jsonobject):
 	bucket_name=jsonobject.get('bucket_name')
 	trackTextArray=jsonobject.get("tracktexts")
 	AC=AudioCombiner(bucket_name)
+	response_json_file_name=str(trackID)
+
+	# It is likely the execution of this code goes above 30 seconds. 
+	# The django front end will time out by then, but function execution does not stop. 
+	
+	# The last Function call would have saved a JSON of the response.
+	# Let us delete that. 
+
+	AC.deleteJSON(response_json_file_name)
+
+	
+
 	processed_tracks=[]
 	for trackText in trackTextArray:
 		
@@ -145,9 +157,22 @@ def CombineFiles(jsonobject):
 	t9=time.time()
 	combined_file_name_with_extension, duration=AC.saveFile(combinedFileName)
 	t10=time.time()
-	print("Saving Combined File Took: " +str(t10-t9))
+	#print("Saving Combined File Took: " +str(t10-t9))
 	responseDict['track_file_name']=combined_file_name_with_extension
 	responseDict['duration']=duration
+
+	# It is likely the execution of this code goes above 30 seconds. 
+	# The django front end will time out, but Google function execution does not stop. 
+	# we have to save the JSON response on the Cloud storage, and access 
+	# it back from the front end once the request on the front end returns
+	# a 503 Timeout Error.
+	# The Code always overwrites the file, so the results are of the most recent file
+	# We also delete the file at the start of the Function call. 
+
+	
+	
+	savedJSONFileName=AC.saveJSONResponse(response_json_file_name,responseDict)
+	#print(savedJSONFileName)
 	#responseDict['track_file_name']=saved_combined_file
 	return jsonify(responseDict)
 
