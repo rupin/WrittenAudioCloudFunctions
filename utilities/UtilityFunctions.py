@@ -9,6 +9,9 @@ from mutagen.mp3 import MP3
 
 from utilities.AudioCombiner import AudioCombiner
 from utilities.AudioCombinerWithSSML import AudioCombinerWithSSML
+from utilities.Translator import Translator
+
+
 from pydub import AudioSegment
 
 #from utilities.FFMPEGCombiner import FFMPEGCombiner
@@ -234,3 +237,9 @@ def GenerateSingleAudio(jsonobject, returnJson=True):
 		return jsonify(output)
 	else:
 		return output
+
+def Translate(jsonobject):
+	output={}
+	TranslatorObject=Translator(jsonobject)
+	translatedDict=TranslatorObject.processTranslation()
+	return jsonify(translatedDict)
