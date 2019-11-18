@@ -2,13 +2,12 @@
 from google.cloud import translate
 from onlineservices.Translate import Translate
 from flask import jsonify
-
+import time
 class Translator():
 
     def __init__(self, jsonObject):
         #print("OK")
-        self.sourceLanguage=jsonObject.get("source_language_code")
-        self.targetLanguage=jsonObject.get("target_language_code")
+        
         self.jsonObject=jsonObject
 
     def processTranslation(self):
@@ -22,7 +21,17 @@ class Translator():
         for tracktext in tracktexts:
             tractTextTranslatedObject={}
             text=tracktext.get("sentence")
-            translatedText=translateObject.getTranslatedText(self.sourceLanguage, self.targetLanguage, text)
+            target_language=tracktext.get("target_language")
+
+
+            t8=time.time()      
+        
+
+            translatedText=translateObject.getTranslatedText(target_language, text)
+            t7=time.time()
+
+
+            print("Translator Took: " +str(t7-t8))
             tractTextTranslatedObject['id']=tracktext.get("id")
             tractTextTranslatedObject['sentence']=translatedText
             translations.append(tractTextTranslatedObject)
