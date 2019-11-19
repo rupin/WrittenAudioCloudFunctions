@@ -73,7 +73,9 @@ class AudioCombiner():
 		f = io.BytesIO()
 		self.audiocontainer.export(f, format="mp3")
 		track_audio = MP3(f)
-		duration=track_audio.info.length	 
+		duration=track_audio.info.length
+		f.seek(0)
+			 
 		blob = self.bucket.blob(filename_with_extension)
 		#print(blob.__dict__)		
 		blob.upload_from_file(f)
