@@ -101,6 +101,7 @@ def CombineFiles(jsonobject):
 	responseDict['id']=trackID
 	bucket_name=jsonobject.get('bucket_name')
 	trackTextArray=jsonobject.get("tracktexts")
+	musicFilePath=jsonobject.get("music_file_path", None)
 	AC=AudioCombiner(bucket_name)
 	response_json_file_name=str(trackID)
 
@@ -148,7 +149,11 @@ def CombineFiles(jsonobject):
 		t7=time.time()
 		print("Combiner Took: " +str(t7-t8))
 
-		
+	combinedAudioDuration=AC.getAudioDuration()
+	#print(combinedAudioDuration)
+	if(musicFilePath is not None):
+		AC.overlayMusic(musicFilePath)
+		AC.combineMusicWithTrack()
 
 	responseDict['processed_tracks']=processed_tracks
 
@@ -162,7 +167,7 @@ def CombineFiles(jsonobject):
 	t10=time.time()
 	#print("Saving Combined File Took: " +str(t10-t9))
 	responseDict['track_file_name']=combined_file_name_with_extension
-	responseDict['duration']=duration
+	responseDict['duration']=combinedAudioDuration
 
 	# It is likely the execution of this code goes above 30 seconds. 
 	# The django front end will time out, but Google function execution does not stop. 
