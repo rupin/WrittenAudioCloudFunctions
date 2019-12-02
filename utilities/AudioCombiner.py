@@ -72,13 +72,14 @@ class AudioCombiner():
 		#3 seconds/3000 milliseconds
 
 
-		if(emptyduration>3000):
-			blankTrackStartTime=round((self.lastTiming+self.lastDuration)*1000,3)
-			silentMarker["start"]=blankTrackStartTime
+	
+		blankTrackStartTime=round((self.lastTiming+self.lastDuration)*1000,3)
+		silentMarker["start"]=blankTrackStartTime
 
-			silentMarker["end"]=round(blankTrackStartTime+emptyduration,3)
-			silentMarker["type"]="S"
-			self.AudioMarkers.append(silentMarker)
+		silentMarker["end"]=round(blankTrackStartTime+emptyduration,3)
+		silentMarker["duration"]=round(emptyduration,3)
+		silentMarker["type"]="S"
+		self.AudioMarkers.append(silentMarker)
 
 		
 		self.AudioMarkers.append(audioMarker)
@@ -130,6 +131,7 @@ class AudioCombiner():
 		    marktype=audioMark['type']
 		    markStart=audioMark['start']
 		    markEnd=audioMark['end']
+		    duration=audioMark.get('duration',0)
 		   # initialSegment=musicFileRef[markStart:markStart+transition]
 		   # middleSegment=musicFileRef[markStart+transition:markEnd-transition]
 		   # finalSegment=musicFileRef[markEnd-transition:markEnd]
@@ -137,10 +139,13 @@ class AudioCombiner():
 		    if(marktype=='S'):#needs the total duration greater than 2000
 		        #initialSegment=initialSegment*
 		        #pass
-		        segment=segment.fade_in(1000).fade_out(1000)
+		        if(duration>3000):
+		        	segment=segment.fade_in(1500).fade_out(1500)
+		        else:
+		        	segment=segment-25
 		        
 		    elif(marktype=='A'):
-		        segment=segment-20
+		        segment=segment-25
 		         
 		    if(modifiedMusicRef is None):
 		        modifiedMusicRef=segment
