@@ -7,7 +7,7 @@ import io
 import tempfile
 import time
 from mutagen.mp3 import MP3
-
+import math
 
 import json
 
@@ -115,12 +115,12 @@ class AudioCombiner():
 		ta=time.time()
 
 
-		self.musiccontainer=AudioSegment.from_file(tempFilePath, format="wav")
+		self.musiccontainer=AudioSegment.from_file(tempFilePath, format="mp3")
 
 
 		musicfileDuration=self.musiccontainer.duration_seconds
 		if(self.track_duration>musicfileDuration):
-			factor=ciel(self.track_duration/musicfileDuration)
+			factor=math.ceil(self.track_duration/musicfileDuration)
 			self.musiccontainer=self.musiccontainer*factor #duplicate the music file
 			self.musiccontainer=(self.musiccontainer[0:self.track_duration*1000]) # trim any excess
 			musicfileDuration=self.musiccontainer.duration_seconds
