@@ -21,8 +21,7 @@ class AudioCombiner():
 		self.silentDurationStarttime=0
 		self.storage_client=storage.Client()
 		self.bucket_name=bucket_name
-		self.bucket = self.storage_client.get_bucket(self.bucket_name)
-		
+		self.bucket = self.storage_client.get_bucket(self.bucket_name)		
 		self.AudioMarkers=[]
 		self.track_duration=None
 
@@ -99,7 +98,8 @@ class AudioCombiner():
 
 
 
-	def overlayMusic(self,music_file_path,musicscaling=-10):
+	def createOverlayMusic(self,music_file_path, attenuation=25):
+		fadeDuration=1500
 		tmpdir=tempfile.gettempdir() # prints the current temporary directory
 		tempFilePath=tmpdir+"/"+music_file_path
 		#print(tempFilePath)	
@@ -122,35 +122,49 @@ class AudioCombiner():
 		if(self.track_duration>musicfileDuration):
 			factor=ciel(self.track_duration/musicfileDuration)
 			self.musiccontainer=self.musiccontainer*factor #duplicate the music file
-			self.musiccontainer=(self.musiccontainer[0:self.track_duration*1000])+musicscaling # trim any excess
+			self.musiccontainer=(self.musiccontainer[0:self.track_duration*1000]) # trim any excess
 			musicfileDuration=self.musiccontainer.duration_seconds
 		
 		modifiedMusicRef=None
-		print(self.AudioMarkers)
+		
+		lastEndTime=0
 		for audioMark in self.AudioMarkers:
-		    marktype=audioMark['type']
-		    markStart=audioMark['start']
-		    markEnd=audioMark['end']
-		    duration=audioMark.get('duration',0)
-		   # initialSegment=musicFileRef[markStart:markStart+transition]
-		   # middleSegment=musicFileRef[markStart+transition:markEnd-transition]
-		   # finalSegment=musicFileRef[markEnd-transition:markEnd]
-		    segment=self.musiccontainer[markStart:markEnd]
-		    if(marktype=='S'):#needs the total duration greater than 2000
-		        #initialSegment=initialSegment*
-		        #pass
-		        if(duration>3000):
-		        	segment=segment.fade_in(1500).fade_out(1500)
-		        else:
-		        	segment=segment-25
-		        
-		    elif(marktype=='A'):
-		        segment=segment-25
-		         
-		    if(modifiedMusicRef is None):
-		        modifiedMusicRef=segment
-		    else:
-		        modifiedMusicRef=modifiedMusicRef+segment
+			print(audioMark)
+			marktype=audioMark['type']
+			markStart=lastEndTime
+			markEnd=audioMark['end']
+			duration=audioMark.get('duration',0)
+			# initialSegment=musicFileRef[markStart:markStart+transition]
+			# middleSegment=musicFileRef[markStart+transition:markEnd-transition]
+			# finalSegment=musicFileRef[markEnd-transition:markEnd]
+			segment=self.musiccontainer[markStart:markEnd]
+			if(marktype=='S'):#needs the total duration greater than 2000
+				#initialSegment=initialSegment*
+				#pass
+				#segment=self.musiccontainer[markStart:markEnd]
+				if(duration>4000):
+					segment=segment.fade_in(fadeDuration).fade_out(fadeDuration)
+				else:
+					# If the duration of the silence
+					# is less than 4000 milliseconds, just keep the music volume low
+					# it is as good as assuming the spoke audio is running
+					# This makes small transitions sound less jarring
+					segment=segment-attenuation
+			    
+			elif(marktype=='A'):
+				
+				segment=segment-attenuation
+			     
+			if(modifiedMusicRef is None):
+				modifiedMusicRef=segment
+			else:
+				modifiedMusicRef=modifiedMusicRef+segment
+
+			lastEndTime=markEnd
+
+		#modifiedMusicRef=modifiedMusicRef
+
+		#segment=self.musiccontainer[endTime]
 
 		self.musiccontainer=modifiedMusicRef
 			
@@ -161,7 +175,10 @@ class AudioCombiner():
 		return self.track_duration
 
 	def combineMusicWithTrack(self):
+		ta=time.time()
 		self.audiocontainer=self.audiocontainer.overlay(self.musiccontainer) 
+		tb=time.time()
+		print("Combining Music with Audio took: " +str(tb-ta))
 
 
 	def saveFile(self, filename):

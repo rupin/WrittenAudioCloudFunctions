@@ -152,7 +152,7 @@ def CombineFiles(jsonobject):
 	combinedAudioDuration=AC.getAudioDuration()
 	#print(combinedAudioDuration)
 	if(musicFilePath is not None):
-		AC.overlayMusic(musicFilePath)
+		AC.createOverlayMusic(musicFilePath)
 		AC.combineMusicWithTrack()
 
 	responseDict['processed_tracks']=processed_tracks
@@ -165,7 +165,7 @@ def CombineFiles(jsonobject):
 	t9=time.time()
 	combined_file_name_with_extension, duration=AC.saveFile(combinedFileName)
 	t10=time.time()
-	#print("Saving Combined File Took: " +str(t10-t9))
+	print("Saving Combined File Took: " +str(t10-t9))
 	responseDict['track_file_name']=combined_file_name_with_extension
 	responseDict['duration']=combinedAudioDuration
 
